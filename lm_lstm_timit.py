@@ -839,8 +839,11 @@ def pred_probs(f_log_probs, prepare_data, options, data, get_proj_h, verbose=Tru
     n_done = 0
 
     for x, y, x_mask in data.get_valid_batch():
-        #x = data[0].T
-        x_mask = np.ones((options['maxlen'], options['batch_size'])).astype('float32')
+        # Transpose data to have the time steps on dimension 0.
+        x = x.transpose(1, 0, 2)
+        y = y.transpose(1, 0, 2)
+        x_mask = x_mask.transpose(1, 0)
+
         n_done += len(x)
         if x.shape[1] is not options['batch_size']:
             continue
