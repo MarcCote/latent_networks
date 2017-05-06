@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 
+import os
 from lm_lstm_timit import train
 
 def main(job_id, params):
@@ -17,7 +18,7 @@ def main(job_id, params):
         batch_size=32,
         valid_batch_size=32,
         validFreq=2000,
-        dispFreq=1,
+        dispFreq=10,
         saveFreq=1000,
         sampleFreq=1000,
         dataset=None,
@@ -29,6 +30,12 @@ def main(job_id, params):
     return validerr
 
 if __name__ == '__main__':
+    try:
+        # Created experiments folder, if needed.
+        os.makedirs("./experiments/timit/")
+    except:
+        pass
+
     main(0, {
         'model': ['./experiments/timit/'],
         'dim_input': [200],

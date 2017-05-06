@@ -188,8 +188,7 @@ class TimitData():
         ####
         # IMPORTANT: u_train is the input and x_train is the target.
         ##
-        # u_train, x_train = data['u_train'], data['x_train']
-        u_train, x_train = data['u_valid'], data['x_valid']
+        u_train, x_train = data['u_train'], data['x_train']
         u_valid, x_valid = data['u_valid'], data['x_valid']
         (u_test, x_test, mask_test) = data['u_test'],  data['x_test'], data['mask_test']
 
@@ -930,8 +929,6 @@ def train(dim_input=200,  # input vector dimensionality
     # Model options
     model_options = locals().copy()
     data = TimitData("timit_raw_batchsize64_seqlen40.npz", batch_size=model_options['batch_size'])
-    #train = get_stream('train', model_options['batch_size'], model_options['maxlen'], num_examples=None, augment=False)
-    #valid = get_stream('valid', model_options['batch_size'], model_options['maxlen'], num_examples=None, augment=False)
 
     print('Building model')
     params = init_params(model_options)
