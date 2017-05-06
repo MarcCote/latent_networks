@@ -44,13 +44,9 @@ def chunk(sequence, n):
     for i in range(0, len(sequence), n):
         yield sequence[i:i + n]
 
-def kl_normal2_normal2(mean1, log_var1, mean2, log_var2):
-    return 0.5 * log_var2 - 0.5 * log_var1 + (T.exp(log_var1) + (mean1 - mean2) ** 2) / (2 * T.exp(log_var2)) - 0.5
-
-
 C = - 0.5 * np.log(2 * np.pi)
 
-def log_normal2(x, mean, log_var):
+def log_prob_gaussian(x, mean, log_var):
     return C - log_var / 2 - (x - mean) ** 2 / (2 * T.exp(log_var))
 
 
@@ -682,9 +678,9 @@ def build_rev_model(tparams, trparams, options):
     out_mu = get_layer('ff')[1](trparams, out, options, prefix='ff_out_mu_r', activ='tanh')
     out_logvar = get_layer('ff')[1](trparams, out, options, prefix='ff_out_sigma_r', activ='linear')
 
-    log_p_y = log_normal2(yr, mean=out_mu, log_var=out_logvar)
+    log_p_y = log_prob_gaussian(yr, mean=out_mu, log_var=out_logvar)
     log_p_y = T.sum(log_p_y, axis=-1)  # Sum over output dim.
-    cost_r = log_p_y
+    cost_r = -log_p_y  # NLL
 
     opt_ret['cost_per_sample'] = cost_r
     cost_r = (cost_r * xr_mask).sum(0)  # Average over seq_len.
@@ -743,9 +739,9 @@ def build_model(tparams, trparams, options, x, y, x_mask, r_states, latent_param
 
     # cost
     # Compute gaussian log prob
-    log_p_y = log_normal2(y, mean=out_mu, log_var=out_logvar)
+    log_p_y = log_prob_gaussian(y, mean=out_mu, log_var=out_logvar)
     log_p_y = T.sum(log_p_y, axis=-1)  # Sum over output dim.
-    cost = log_p_y
+    cost = -log_p_y  # NLL
 
     opt_ret['cost_per_sample'] = cost
     cost = (cost * x_mask).sum(0)
