@@ -861,9 +861,6 @@ def pred_probs(f_log_probs, prepare_data, options, data, get_proj_h, verbose=Tru
         if numpy.isnan(numpy.mean(probs)):
             ipdb.set_trace()
 
-        if verbose:
-            print('%d samples computed' % (n_done))
-
     return numpy.array(probs)
 
 
